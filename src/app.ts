@@ -1,6 +1,7 @@
 import express, { type Express } from "express";
 import { healthRouter } from "./routes/health.route";
 import { infoRouter } from "./routes/info.route";
+import { userRouter } from "./routes/user.route";
 
 export function createApp(): Express {
   const app = express();
@@ -9,6 +10,7 @@ export function createApp(): Express {
 
   app.use(healthRouter);
   app.use(infoRouter);
+  app.use(userRouter);
 
   return app;
 }
