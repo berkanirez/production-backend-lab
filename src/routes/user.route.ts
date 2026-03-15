@@ -1,28 +1,17 @@
 import { Router, type Request, type Response } from "express";
 import { users } from "../data/fake-db";
+import { successResponse } from "../common/http/response";
+import type { ApiSuccessResponse } from "../types/api.types";
 import type { User } from "../types/domain.types";
 
-interface GetUsersResponse {
-  success: true;
-  message: string;
-  data: User[];
-  count: number;
-}
+type GetUsersResponse = ApiSuccessResponse<User[]>;
 
 const userRouter = Router();
 
-userRouter.get(
-  "/users",
-  (_req: Request, res: Response<GetUsersResponse>) => {
-    const responseBody: GetUsersResponse = {
-      success: true,
-      message: "Users fetched successfully.",
-      data: users,
-      count: users.length,
-    };
+userRouter.get("/users", (_req: Request, res: Response<GetUsersResponse>) => {
+  const responseBody = successResponse(users, "Users fetched successfully.");
 
-    res.status(200).json(responseBody);
-  },
-);
+  res.status(200).json(responseBody);
+});
 
 export { userRouter };
