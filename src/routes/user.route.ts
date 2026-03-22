@@ -1,14 +1,12 @@
 import { Router, type NextFunction, type Request, type Response } from "express";
 import { users } from "../data/fake-db";
-import { AppError } from "../common/errors";
 import { successResponse } from "../common/http/response";
 import { getUserById } from "../services/user.service";
-import type { ApiErrorResponse, ApiSuccessResponse } from "../types/api.types";
+import type { ApiSuccessResponse } from "../types/api.types";
 import type { User } from "../types/domain.types";
 
 type GetUsersResponse = ApiSuccessResponse<User[]>;
 type GetUserByIdResponse = ApiSuccessResponse<User>;
-type UserRouteResponse = GetUserByIdResponse | ApiErrorResponse;
 
 const userRouter = Router();
 
@@ -21,7 +19,7 @@ userRouter.get(
   "/users/:id",
   async (
     req: Request<{ id: string }>,
-    res: Response<UserRouteResponse>,
+    res: Response<GetUserByIdResponse>,
     next: NextFunction,
   ) => {
     try {
@@ -30,16 +28,6 @@ userRouter.get(
 
       res.status(200).json(responseBody);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({
-          success: false,
-          message: error.message,
-          errorCode: error.errorCode,
-        });
-
-        return;
-      }
-
       next(error);
     }
   },

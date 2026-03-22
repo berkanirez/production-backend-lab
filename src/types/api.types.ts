@@ -8,4 +8,5 @@ export interface ApiErrorResponse {
   success: false;
   message: string;
   errorCode: string;
+  stack?: string;
 }
