@@ -63,3 +63,26 @@ interface vs type
 generic response modeli
 
 fake data ile domain modelleme
+
+## Error Strategy
+
+This project uses centralized error handling.
+
+### Error flow
+
+Request -> Route -> Service -> Error thrown -> next(error) -> Error Middleware -> Standard error response
+
+### Error categories
+
+- BadRequestError -> 400
+- UnauthorizedError -> 401
+- ForbiddenError -> 403
+- NotFoundError -> 404
+- Unexpected errors -> 500
+
+### Why centralized error handling?
+
+- Prevents repeated error response code in every route
+- Keeps response format consistent
+- Separates business logic from HTTP error formatting
+- Allows different behavior for development and production

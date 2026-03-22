@@ -25,7 +25,6 @@ userRouter.get(
     try {
       const user = await getUserById(req.params.id);
       const responseBody = successResponse(user, "User fetched successfully.");
-
       res.status(200).json(responseBody);
     } catch (error) {
       next(error);
