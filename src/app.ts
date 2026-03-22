@@ -4,6 +4,7 @@ import { infoRouter } from "./routes/info.route";
 import { projectRouter } from "./routes/project.route";
 import { userRouter } from "./routes/user.route";
 import { errorMiddleware } from "./middlewares/error.middleware";
+import { notFoundMiddleware } from "./middlewares/not-found.middleware";
 
 export function createApp(): Express {
   const app = express();
@@ -15,6 +16,7 @@ export function createApp(): Express {
   app.use(userRouter);
   app.use(projectRouter);
 
+  app.use(notFoundMiddleware);
   app.use(errorMiddleware);
 
   return app;
