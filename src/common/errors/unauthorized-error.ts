@@ -1,0 +1,13 @@
+import { AppError } from "./app-error";
+
+export class UnauthorizedError extends AppError {
+  constructor(
+    message = "Unauthorized.",
+    errorCode = "UNAUTHORIZED",
+  ) {
+    super(message, 401, errorCode);
+
+    this.name = "UnauthorizedError";
+    Object.setPrototypeOf(this, UnauthorizedError.prototype);
+  }
+}
