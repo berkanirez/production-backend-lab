@@ -86,3 +86,21 @@ Request -> Route -> Service -> Error thrown -> next(error) -> Error Middleware -
 - Keeps response format consistent
 - Separates business logic from HTTP error formatting
 - Allows different behavior for development and production
+
+## Hafta 3 İlerlemesi
+
+Hafta 3’te API yüzeyi daha düzenli ve gerçek backend kullanımına daha yakın hale getirildi.
+
+### Eklenen kaynaklar
+- Users
+- Projects
+- Tasks
+
+### Desteklenen yapılar
+- Resource odaklı route isimlendirmesi
+- GET ve POST semantiği
+- 200 ve 201 status code kullanımı
+- Liste endpoint’leri için pagination
+- Query param ile filtering ve sorting
+- Standart API contract dokümantasyonu
+- Tanımsız route’lar için standart JSON 404 davranışı
