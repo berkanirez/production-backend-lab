@@ -3,6 +3,7 @@ import {
   BadRequestError,
   ForbiddenError,
   NotFoundError,
+  ConflictError,
 } from "../common/errors";
 import type { CreateUserDto } from "../types/dto.types";
 import type { User, UserRole } from "../types/domain.types";
@@ -51,7 +52,7 @@ export async function createUser(input: CreateUserDto): Promise<User> {
   const existingUser = users.find((item) => item.email === input.email);
 
   if (existingUser) {
-    throw new BadRequestError(
+    throw new ConflictError(
       "A user with this email already exists.",
       "USER_EMAIL_ALREADY_EXISTS",
     );
