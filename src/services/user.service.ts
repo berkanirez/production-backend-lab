@@ -1,12 +1,14 @@
 import { users } from "../data/fake-db";
 import {
   BadRequestError,
+  ConflictError,
   ForbiddenError,
   NotFoundError,
-  ConflictError,
 } from "../common/errors";
+import type { PaginatedResponse } from "../types/api.types";
 import type { CreateUserDto } from "../types/dto.types";
 import type { User, UserRole } from "../types/domain.types";
+import type { UserListQuery } from "../types/query.types";
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -22,6 +24,16 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
+function parsePositiveNumber(value: string | undefined, defaultValue: number): number {
+  const parsed = Number(value);
+
+  if (Number.isNaN(parsed) || parsed <= 0) {
+    return defaultValue;
+  }
+
+  return parsed;
+}
+
 export async function getUserById(id: string): Promise<User> {
   await wait(300);
 
@@ -34,9 +46,58 @@ export async function getUserById(id: string): Promise<User> {
   return user;
 }
 
-export async function getUsers(): Promise<User[]> {
+export async function getUsers(query: UserListQuery): Promise<PaginatedResponse<User>> {
   await wait(150);
-  return users;
+
+  const page = parsePositiveNumber(query.page, 1);
+  const limit = parsePositiveNumber(query.limit, 10);
+
+  let filteredUsers = [...users];
+
+  if (query.role) {
+    filteredUsers = filteredUsers.filter((item) => item.role === query.role);
+  }
+
+  if (query.isActive === "true") {
+    filteredUsers = filteredUsers.filter((item) => item.isActive === true);
+  }
+
+  if (query.isActive === "false") {
+    filteredUsers = filteredUsers.filter((item) => item.isActive === false);
+  }
+
+  if (query.sort === "name_asc") {
+    filteredUsers.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  if (query.sort === "name_desc") {
+    filteredUsers.sort((a, b) => b.name.localeCompare(a.name));
+  }
+
+  if (query.sort === "createdAt_asc") {
+    filteredUsers.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  }
+
+  if (query.sort === "createdAt_desc") {
+    filteredUsers.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  const totalItems = filteredUsers.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+  const startIndex = (page - 1) * limit;
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + limit);
+
+  return {
+    success: true,
+    message: "Users fetched successfully.",
+    data: paginatedUsers,
+    meta: {
+      page,
+      limit,
+      totalItems,
+      totalPages,
+    },
+  };
 }
 
 export async function createUser(input: CreateUserDto): Promise<User> {

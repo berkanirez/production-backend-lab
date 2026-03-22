@@ -10,3 +10,17 @@ export interface ApiErrorResponse {
   errorCode: string;
   stack?: string;
 }
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+  success: true;
+  message: string;
+  data: T[];
+  meta: PaginationMeta;
+}

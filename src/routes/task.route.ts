@@ -1,22 +1,26 @@
 import { Router, type NextFunction, type Request, type Response } from "express";
 import { successResponse } from "../common/http/response";
 import { createTask, getTasks } from "../services/task.service";
-import type { ApiSuccessResponse } from "../types/api.types";
+import type { ApiSuccessResponse, PaginatedResponse } from "../types/api.types";
 import type { CreateTaskDto } from "../types/dto.types";
 import type { Task } from "../types/domain.types";
+import type { TaskListQuery } from "../types/query.types";
 
-type GetTasksResponse = ApiSuccessResponse<Task[]>;
+type GetTasksResponse = PaginatedResponse<Task>;
 type CreateTaskResponse = ApiSuccessResponse<Task>;
 
 const taskRouter = Router();
 
 taskRouter.get(
   "/tasks",
-  async (_req: Request, res: Response<GetTasksResponse>, next: NextFunction) => {
+  async (
+    req: Request<unknown, unknown, unknown, TaskListQuery>,
+    res: Response<GetTasksResponse>,
+    next: NextFunction,
+  ) => {
     try {
-      const taskList = await getTasks();
-      const responseBody = successResponse(taskList, "Tasks fetched successfully.");
-      res.status(200).json(responseBody);
+      const result = await getTasks(req.query);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }

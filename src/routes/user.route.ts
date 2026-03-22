@@ -1,11 +1,12 @@
 import { Router, type NextFunction, type Request, type Response } from "express";
 import { successResponse } from "../common/http/response";
 import { createUser, getUserById, getUsers } from "../services/user.service";
-import type { ApiSuccessResponse } from "../types/api.types";
+import type { ApiSuccessResponse, PaginatedResponse } from "../types/api.types";
 import type { CreateUserDto } from "../types/dto.types";
 import type { User } from "../types/domain.types";
+import type { UserListQuery } from "../types/query.types";
 
-type GetUsersResponse = ApiSuccessResponse<User[]>;
+type GetUsersResponse = PaginatedResponse<User>;
 type GetUserByIdResponse = ApiSuccessResponse<User>;
 type CreateUserResponse = ApiSuccessResponse<User>;
 
@@ -13,11 +14,14 @@ const userRouter = Router();
 
 userRouter.get(
   "/users",
-  async (_req: Request, res: Response<GetUsersResponse>, next: NextFunction) => {
+  async (
+    req: Request<unknown, unknown, unknown, UserListQuery>,
+    res: Response<GetUsersResponse>,
+    next: NextFunction,
+  ) => {
     try {
-      const userList = await getUsers();
-      const responseBody = successResponse(userList, "Users fetched successfully.");
-      res.status(200).json(responseBody);
+      const result = await getUsers(req.query);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }
